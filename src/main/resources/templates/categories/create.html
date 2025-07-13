@@ -22,30 +22,29 @@
 </div>
 
 <script>
-    document.getElementById('categoryForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // prevent page reload
+    document.getElementById('categoryForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-        const name = document.getElementById('categoryName').value;
+        try {
+            const name = document.getElementById('categoryName').value;
 
-        fetch('/categories', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: name })
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to save category");
-                return response.text();
-            })
-            .then(data => {
-                document.getElementById('message').innerHTML = `<div class="alert alert-success">Category created successfully</div>`;
-                document.getElementById('categoryForm').reset();
-            })
-            .catch(error => {
-                document.getElementById('message').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            const response = await fetch('/categories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
             });
+
+            if (!response.ok) throw new Error("Failed to save category");
+
+            const data = await response.text();
+            document.getElementById('message').innerHTML = `<div class="alert alert-success">Category created successfully</div>`;
+            this.reset();
+
+        } catch (error) {
+            document.getElementById('message').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+        }
     });
+
 </script>
 
 </body>
